@@ -62,7 +62,7 @@ export default function ProjectChart({ data }: { data: ChartData[] }) {
               borderRadius: '8px',
               color: 'hsl(var(--foreground))'
             }}
-            formatter={(value: number) => [formatYAxis(value), "TVL"]}
+            formatter={(value: any) => [formatYAxis(Number(value) || 0), "TVL"]}
           />
           <Area 
             type="monotone" 

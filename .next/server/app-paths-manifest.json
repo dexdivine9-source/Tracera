@@ -1,0 +1,8 @@
+{
+  "/api/download/route": "app/api/download/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/projects/[slug]/page": "app/dashboard/projects/[slug]/page.js",
+  "/submit/page": "app/submit/page.js",
+  "/page": "app/page.js",
+  "/dashboard/page": "app/dashboard/page.js"
+}
