@@ -17,6 +17,23 @@ import { supabase } from "@/lib/supabase";
 import { getProtocolMetrics } from "@/lib/defillama";
 import ProjectChart from "@/components/projects/ProjectChart";
 
+// Explicit type matching our database schema — avoids Supabase generic 'never' issue
+interface ProjectRow {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  category: string | null;
+  country: string | null;
+  x_handle: string | null;
+  website: string | null;
+  status: string | null;
+  is_verified: boolean | null;
+  tvl: number | null;
+  volume_24h: number | null;
+  created_at: string;
+}
+
 const formatCurrency = (val: number | null) => {
   if (!val || isNaN(val)) return "$0";
   if (val >= 1000000000) return `$${(val / 1000000000).toFixed(2)}B`;
@@ -26,17 +43,21 @@ const formatCurrency = (val: number | null) => {
 };
 
 async function getProjectData(slug: string) {
-  // 1. Get database project info
-  const { data: dbProject, error } = await supabase.from('projects').select('*').eq('slug', slug).single();
-  if (error || !dbProject) return null;
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
-  // 2. Try to get live metrics from DefiLlama
-  // Note: DefiLlama slugs might slightly differ from ours. 
-  // For this exercise, we assume they match or we fallback.
+  if (error || !data) return null;
+
+  // Cast to our explicit type to avoid 'never'
+  const dbProject = data as unknown as ProjectRow;
+
+  // Try to get live metrics from DefiLlama (graceful fallback if not found)
   const liveMetrics = await getProtocolMetrics(slug.toLowerCase());
 
   return {
-    db: dbProject,
     live: liveMetrics,
     display: {
       name: dbProject.name,
@@ -45,7 +66,7 @@ async function getProjectData(slug: string) {
       description: dbProject.description || "",
       tvl: liveMetrics ? formatCurrency(liveMetrics.tvl) : formatCurrency(dbProject.tvl),
       volume: liveMetrics?.volume24h ? formatCurrency(liveMetrics.volume24h) : formatCurrency(dbProject.volume_24h),
-      activeAddresses: "Active User", 
+      activeAddresses: "Active User",
       status: dbProject.status || "Building",
       isVerified: !!dbProject.is_verified,
       website: dbProject.website || "#",
@@ -55,6 +76,7 @@ async function getProjectData(slug: string) {
     }
   };
 }
+
 
 export default async function ProjectDetailPage({ 
   params 

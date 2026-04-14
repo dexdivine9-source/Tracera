@@ -7,6 +7,20 @@ import ProjectSkeleton from "../ui/ProjectSkeleton";
 
 import { supabase } from "@/lib/supabase";
 
+// Explicit DB type to avoid Supabase generic resolving to 'never'
+interface DbProject {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  category: string | null;
+  country: string | null;
+  status: string | null;
+  is_verified: boolean | null;
+  tvl: number | null;
+  volume_24h: number | null;
+}
+
 const formatCurrency = (val: number | null) => {
   if (!val) return "$0";
   if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
@@ -47,7 +61,8 @@ export default function ProjectDirectory({
       }
 
       if (data) {
-        const formatted = data.map(db => ({
+        const rows = data as unknown as DbProject[];
+        const formatted = rows.map(db => ({
           id: db.id,
           slug: db.slug,
           name: db.name,

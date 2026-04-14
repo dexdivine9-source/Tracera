@@ -4,6 +4,12 @@ import { TrendingUp, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+// Explicit type to avoid 'never' from Supabase generics
+interface LeaderRow {
+  name: string;
+  volume_24h: number | null;
+}
+
 const formatCurrency = (val: number | null) => {
   if (!val) return "$0";
   if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
@@ -25,10 +31,11 @@ export default function Leaderboard() {
         .limit(5);
 
       if (data) {
-        setLeaders(data.map(d => ({
+        const rows = data as unknown as LeaderRow[];
+        setLeaders(rows.map(d => ({
           name: d.name,
           volume: formatCurrency(d.volume_24h),
-          trend: "+12%" // Fixed mockup trend since db lacks time-series logic currently
+          trend: "+12%"
         })));
       }
       setIsLoading(false);
