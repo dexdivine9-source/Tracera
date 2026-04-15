@@ -21,12 +21,7 @@ export default function Home() {
           Open Dashboard
           <ArrowRight className="ml-2 h-4 w-4" />
         </Link>
-        <a
-          href="/api/download"
-          className="inline-flex h-12 items-center justify-center rounded-md border border-border bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-secondary hover:text-secondary-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-        >
-          Download Source Code (ZIP)
-        </a>
+
       </div>
     </main>
   );
