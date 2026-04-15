@@ -16,23 +16,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { getProtocolMetrics } from "@/lib/defillama";
 import ProjectChart from "@/components/projects/ProjectChart";
-
-// Explicit type matching our database schema — avoids Supabase generic 'never' issue
-interface ProjectRow {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  category: string | null;
-  country: string | null;
-  x_handle: string | null;
-  website: string | null;
-  status: string | null;
-  is_verified: boolean | null;
-  tvl: number | null;
-  volume_24h: number | null;
-  created_at: string;
-}
+import type { ProjectRow } from "@/types/project";
 
 const formatCurrency = (val: number | null) => {
   if (!val || isNaN(val)) return "$0";

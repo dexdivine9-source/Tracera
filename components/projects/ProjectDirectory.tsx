@@ -6,20 +6,8 @@ import ProjectCard, { Project } from "./ProjectCard";
 import ProjectSkeleton from "../ui/ProjectSkeleton";
 
 import { supabase } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/project";
 
-// Explicit DB type to avoid Supabase generic resolving to 'never'
-interface DbProject {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  category: string | null;
-  country: string | null;
-  status: string | null;
-  is_verified: boolean | null;
-  tvl: number | null;
-  volume_24h: number | null;
-}
 
 const formatCurrency = (val: number | null) => {
   if (!val) return "$0";
@@ -61,7 +49,7 @@ export default function ProjectDirectory({
       }
 
       if (data) {
-        const rows = data as unknown as DbProject[];
+        const rows = data as unknown as ProjectRow[];
         const formatted = rows.map(db => ({
           id: db.id,
           slug: db.slug,

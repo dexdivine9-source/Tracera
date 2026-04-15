@@ -3,12 +3,8 @@
 import { TrendingUp, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/project";
 
-// Explicit type to avoid 'never' from Supabase generics
-interface LeaderRow {
-  name: string;
-  volume_24h: number | null;
-}
 
 const formatCurrency = (val: number | null) => {
   if (!val) return "$0";
@@ -31,7 +27,7 @@ export default function Leaderboard() {
         .limit(5);
 
       if (data) {
-        const rows = data as unknown as LeaderRow[];
+        const rows = data as unknown as ProjectRow[];
         setLeaders(rows.map(d => ({
           name: d.name,
           volume: formatCurrency(d.volume_24h),

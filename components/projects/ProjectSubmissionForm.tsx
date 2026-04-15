@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Loader2, Send, ChevronDown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import type { ProjectInsert } from "@/types/project";
 
 const CATEGORIES = [
   "Payments",
@@ -72,8 +73,8 @@ export default function ProjectSubmissionForm() {
     setIsSubmitting(true);
 
     const slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    
-    const { error } = await supabase.from('projects').insert({
+
+    const payload: ProjectInsert = {
       name: formData.name,
       slug: slug,
       category: formData.category,
@@ -81,9 +82,11 @@ export default function ProjectSubmissionForm() {
       description: formData.description,
       website: formData.website,
       x_handle: formData.twitter,
-      status: "Building", // default value for new submissions
+      status: "Building",
       is_verified: false,
-    });
+    };
+
+    const { error } = await supabase.from('projects').insert(payload);
 
     setIsSubmitting(false);
 
